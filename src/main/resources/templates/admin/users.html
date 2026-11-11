@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head('User accounts')}"></head>
+<body>
+<div class="app-shell">
+<aside th:replace="~{fragments/layout :: sidebar('users')}"></aside>
+<div class="app-main">
+<header th:replace="~{fragments/layout :: topbar('User accounts')}"></header>
+<main class="content">
+<div th:replace="~{fragments/layout :: flash}"></div>
+<div class="row g-3">
+  <div class="col-lg-4"><div class="card"><div class="card-header">Create back-office account</div><div class="card-body">
+    <p class="text-muted small">Doctor accounts are created on the Doctors page; patient accounts on the Patients page or via self-registration.</p>
+    <form th:action="@{/admin/users}" th:object="${form}" method="post" novalidate>
+      <div class="row g-3">
+        <div th:replace="~{fragments/forms :: text('Full name *','fullName','col-12')}"></div>
+        <div th:replace="~{fragments/forms :: email('Email *','email','col-12')}"></div>
+        <div th:replace="~{fragments/forms :: text('Username *','username','col-12')}"></div>
+        <div th:replace="~{fragments/forms :: password('Password * (min 8, letter + digit)','password','col-12')}"></div>
+        <div class="col-12"><label class="form-label" for="role">Role *</label>
+          <select class="form-select" th:field="*{role}" th:errorclass="is-invalid">
+            <option th:each="r : ${roles}" th:value="${r}" th:text="${r.label}">r</option></select>
+          <div class="invalid-feedback" th:errors="*{role}"></div></div>
+      </div>
+      <button class="btn btn-primary mt-3" type="submit"><i class="bi bi-person-plus me-1"></i> Create account</button>
+    </form></div></div></div>
+  <div class="col-lg-8"><div class="card"><div class="card-header">All accounts</div><div class="table-responsive">
+    <table class="table"><thead><tr><th>Username</th><th>Name</th><th>Role</th><th>Status</th><th>Actions</th></tr></thead><tbody>
+      <tr th:each="u : ${users}">
+        <td th:text="${u.username}">u</td><td th:text="${u.fullName}">n</td><td th:text="${u.role.label}">r</td>
+        <td><span class="badge" th:classappend="${u.enabled} ? 'bg-success' : 'bg-secondary'" th:text="${u.enabled} ? 'Enabled' : 'Disabled'">s</span></td>
+        <td>
+          <div class="d-flex flex-wrap gap-2">
+            <form th:action="@{/admin/users/{id}/enabled(id=${u.id})}" method="post">
+              <input type="hidden" name="enabled" th:value="${!u.enabled}">
+              <button class="btn btn-sm" th:classappend="${u.enabled} ? 'btn-outline-danger' : 'btn-outline-success'" type="submit" th:text="${u.enabled} ? 'Disable' : 'Enable'">x</button></form>
+            <form class="d-flex gap-1" th:action="@{/admin/users/{id}/reset-password(id=${u.id})}" method="post" data-confirm="Set a new password for this user?">
+              <input type="password" class="form-control form-control-sm" name="newPassword" placeholder="New password" required minlength="8" maxlength="64" autocomplete="new-password">
+              <button class="btn btn-sm btn-outline-secondary" type="submit">Reset</button></form>
+          </div></td></tr>
+    </tbody></table></div></div></div>
+</div>
+</main>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</div>
+</div>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

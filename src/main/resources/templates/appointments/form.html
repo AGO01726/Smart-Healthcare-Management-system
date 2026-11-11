@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head('Book appointment')}"></head>
+<body>
+<div class="app-shell">
+<aside th:replace="~{fragments/layout :: sidebar('appointments')}"></aside>
+<div class="app-main">
+<header th:replace="~{fragments/layout :: topbar('Book appointment')}"></header>
+<main class="content">
+<div th:replace="~{fragments/layout :: flash}"></div>
+<div class="page-title-row"><h2>Book an appointment</h2><a class="btn btn-outline-secondary" th:href="@{/appointments}">Back</a></div>
+<div class="card"><div class="card-body">
+<p class="text-muted small">Each appointment lasts <strong th:text="${slotMinutes}">30</strong> minutes. Overlapping bookings for the same doctor or patient are rejected.</p>
+<form th:action="@{/appointments}" th:object="${form}" method="post" novalidate>
+  <div class="row g-3">
+    <div class="col-md-6" sec:authorize="hasAnyRole('ADMIN','RECEPTIONIST')">
+      <label class="form-label" for="patientId">Patient *</label>
+      <select class="form-select" th:field="*{patientId}" th:errorclass="is-invalid">
+        <option value="">Select patient...</option>
+        <option th:each="p : ${patients}" th:value="${p.id}" th:text="${p.fullName + ' (' + p.patientCode + ')'}">Patient</option>
+      </select><div class="invalid-feedback" th:errors="*{patientId}"></div>
+    </div>
+    <div class="col-md-6">
+      <label class="form-label" for="doctorId">Doctor *</label>
+      <select class="form-select" th:field="*{doctorId}" th:errorclass="is-invalid">
+        <option value="">Select doctor...</option>
+        <option th:each="d : ${doctors}" th:value="${d.id}" th:text="${d.fullName + ' - ' + d.specialization + ' (' + d.availableDaysLabel + ')'}">Doctor</option>
+      </select><div class="invalid-feedback" th:errors="*{doctorId}"></div>
+    </div>
+    <div th:replace="~{fragments/forms :: date('Date *','appointmentDate','col-md-3')}"></div>
+    <div th:replace="~{fragments/forms :: time('Start time *','startTime','col-md-3')}"></div>
+    <div class="col-12"><label class="form-label">Free slots</label><div id="slotBox"></div></div>
+    <div th:replace="~{fragments/forms :: text('Reason for visit *','reason','col-12')}"></div>
+  </div>
+  <div class="mt-4 d-flex gap-2"><button class="btn btn-primary" type="submit"><i class="bi bi-check2-circle me-1"></i> Book</button>
+    <a class="btn btn-outline-secondary" th:href="@{/appointments}">Cancel</a></div>
+</form></div></div>
+</main>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</div>
+</div>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

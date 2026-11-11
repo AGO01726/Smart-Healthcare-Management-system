@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Patient registration')}"></head>
+<body>
+<div class="auth-wrap">
+    <div class="auth-card wide">
+        <div class="logo"><i class="bi bi-person-plus-fill"></i></div>
+        <h1 class="h4 text-center mb-1">Patient registration</h1>
+        <p class="text-center text-muted mb-4">Create your patient portal account</p>
+
+        <div th:replace="~{fragments/layout :: flash}"></div>
+
+        <form th:action="@{/register}" th:object="${form}" method="post" novalidate>
+            <div class="row g-3">
+                <div th:replace="~{fragments/forms :: text('First name *','firstName','col-md-6')}"></div>
+                <div th:replace="~{fragments/forms :: text('Last name *','lastName','col-md-6')}"></div>
+                <div class="col-md-6">
+                    <label class="form-label" for="gender">Gender *</label>
+                    <select class="form-select" th:field="*{gender}" th:errorclass="is-invalid">
+                        <option value="">Select...</option>
+                        <option th:each="g : ${genders}" th:value="${g}" th:text="${g.label}">Male</option>
+                    </select>
+                    <div class="invalid-feedback" th:errors="*{gender}"></div>
+                </div>
+                <div th:replace="~{fragments/forms :: date('Date of birth *','dateOfBirth','col-md-6')}"></div>
+                <div th:replace="~{fragments/forms :: text('Phone *','phone','col-md-6')}"></div>
+                <div th:replace="~{fragments/forms :: email('Email *','email','col-md-6')}"></div>
+                <div th:replace="~{fragments/forms :: text('Username *','username','col-md-6')}"></div>
+                <div th:replace="~{fragments/forms :: password('Password * (min 8, letter + digit)','password','col-md-6')}"></div>
+            </div>
+            <div class="d-flex gap-2 mt-4">
+                <button type="submit" class="btn btn-primary"><i class="bi bi-check2-circle me-1"></i> Register</button>
+                <a class="btn btn-outline-secondary" th:href="@{/login}">Back to sign in</a>
+            </div>
+        </form>
+    </div>
+</div>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

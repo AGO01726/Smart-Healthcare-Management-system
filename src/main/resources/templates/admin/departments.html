@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head('Departments')}"></head>
+<body>
+<div class="app-shell">
+<aside th:replace="~{fragments/layout :: sidebar('departments')}"></aside>
+<div class="app-main">
+<header th:replace="~{fragments/layout :: topbar('Departments')}"></header>
+<main class="content">
+<div th:replace="~{fragments/layout :: flash}"></div>
+<div class="row g-3">
+  <div class="col-lg-4"><div class="card"><div class="card-header" th:text="${form.id == null} ? 'Add department' : 'Edit department'">Add</div><div class="card-body">
+    <form th:action="@{/admin/departments}" th:object="${form}" method="post" novalidate>
+      <input type="hidden" th:field="*{id}">
+      <div class="row g-3">
+        <div th:replace="~{fragments/forms :: text('Name *','name','col-12')}"></div>
+        <div th:replace="~{fragments/forms :: text('Description','description','col-12')}"></div>
+      </div>
+      <div class="mt-3 d-flex gap-2"><button class="btn btn-primary" type="submit"><i class="bi bi-save me-1"></i> Save</button>
+        <a class="btn btn-outline-secondary" th:if="${form.id != null}" th:href="@{/admin/departments}">Cancel</a></div>
+    </form></div></div></div>
+  <div class="col-lg-8"><div class="card"><div class="card-header">All departments</div><div class="table-responsive">
+    <table class="table"><thead><tr><th>Name</th><th>Description</th><th>Doctors</th><th>Staff</th><th></th></tr></thead><tbody>
+      <tr th:each="d : ${departments}">
+        <td class="fw-semibold" th:text="${d.name}">n</td><td th:text="${d.description} ?: '-'">d</td>
+        <td th:text="${doctorCounts[d.id]}">0</td><td th:text="${staffCounts[d.id]}">0</td>
+        <td class="text-end text-nowrap">
+          <a class="btn btn-sm btn-outline-secondary" th:href="@{/admin/departments(edit=${d.id})}">Edit</a>
+          <form class="d-inline" th:action="@{/admin/departments/{id}/delete(id=${d.id})}" method="post" data-confirm="Delete this department?">
+            <button class="btn btn-sm btn-outline-danger" type="submit">Delete</button></form></td></tr>
+      <tr th:if="${#lists.isEmpty(departments)}"><td colspan="5"><div class="empty-state">No departments yet.</div></td></tr>
+    </tbody></table></div></div></div>
+</div>
+</main>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</div>
+</div>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

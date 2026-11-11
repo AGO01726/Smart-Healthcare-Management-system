@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head('Doctor form')}"></head>
+<body>
+<div class="app-shell">
+<aside th:replace="~{fragments/layout :: sidebar('doctors')}"></aside>
+<div class="app-main">
+<header th:replace="~{fragments/layout :: topbar('Doctor form')}"></header>
+<main class="content">
+<div th:replace="~{fragments/layout :: flash}"></div>
+<div class="page-title-row"><h2 th:text="${editing} ? 'Edit doctor' : 'Add doctor'">Doctor</h2>
+  <a class="btn btn-outline-secondary" th:href="@{/doctors}">Back</a></div>
+<div class="card"><div class="card-body">
+<form th:action="${editing} ? @{/doctors/{id}(id=${doctorId})} : @{/doctors}" th:object="${form}" method="post" novalidate>
+  <div class="row g-3">
+    <div th:replace="~{fragments/forms :: text('Full name *','fullName','col-md-6')}"></div>
+    <div th:replace="~{fragments/forms :: email('Email *','email','col-md-6')}"></div>
+    <th:block th:unless="${editing}">
+      <div th:replace="~{fragments/forms :: text('Login username *','username','col-md-6')}"></div>
+      <div th:replace="~{fragments/forms :: password('Login password * (min 8, letter + digit)','password','col-md-6')}"></div>
+    </th:block>
+    <div class="col-md-6">
+      <label class="form-label" for="departmentId">Department *</label>
+      <select class="form-select" th:field="*{departmentId}" th:errorclass="is-invalid">
+        <option value="">Select...</option>
+        <option th:each="d : ${departments}" th:value="${d.id}" th:text="${d.name}">Dept</option>
+      </select>
+      <div class="invalid-feedback" th:errors="*{departmentId}"></div>
+    </div>
+    <div th:replace="~{fragments/forms :: text('Specialization *','specialization','col-md-6')}"></div>
+    <div th:replace="~{fragments/forms :: text('Qualification','qualification','col-md-6')}"></div>
+    <div th:replace="~{fragments/forms :: text('Phone *','phone','col-md-6')}"></div>
+    <div th:replace="~{fragments/forms :: number('Experience (years) *','experienceYears','col-md-6')}"></div>
+    <div th:replace="~{fragments/forms :: number('Consultation fee (INR) *','consultationFee','col-md-6')}"></div>
+    <div th:replace="~{fragments/forms :: time('Available from *','availableFrom','col-md-6')}"></div>
+    <div th:replace="~{fragments/forms :: time('Available to *','availableTo','col-md-6')}"></div>
+    <div class="col-12">
+      <label class="form-label d-block">Available days *</label>
+      <div class="form-check form-check-inline" th:each="d : ${days}">
+        <input class="form-check-input" type="checkbox" th:field="*{availableDays}" th:value="${d}">
+        <label class="form-check-label" th:for="${#ids.prev('availableDays')}" th:text="${#strings.capitalize(#strings.toLowerCase(d))}">Monday</label>
+      </div>
+    </div>
+    <div class="col-12"><div class="form-check form-switch">
+      <input class="form-check-input" type="checkbox" th:field="*{active}"><label class="form-check-label" for="active">Active (accepts appointments)</label></div></div>
+  </div>
+  <div class="mt-4 d-flex gap-2">
+    <button class="btn btn-primary" type="submit"><i class="bi bi-save me-1"></i> Save</button>
+    <a class="btn btn-outline-secondary" th:href="@{/doctors}">Cancel</a></div>
+</form></div></div>
+</main>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</div>
+</div>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

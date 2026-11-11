@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head('Admin Dashboard')}"></head>
+<body>
+<div class="app-shell">
+<aside th:replace="~{fragments/layout :: sidebar('dashboard')}"></aside>
+<div class="app-main">
+<header th:replace="~{fragments/layout :: topbar('Admin Dashboard')}"></header>
+<main class="content">
+<div th:replace="~{fragments/layout :: flash}"></div>
+<div class="demo-banner mb-3"><i class="bi bi-info-circle me-1"></i> All records are fictional demo data.</div>
+<div class="row g-3 mb-3">
+<div class="col-6 col-xl-3"><div class="card stat-card"><div class="icon icon-teal"><i class="bi bi-people"></i></div><div><div class="value" th:text="${stats['totalPatients']}">0</div><div class="label">Patients</div></div></div></div>
+<div class="col-6 col-xl-3"><div class="card stat-card"><div class="icon icon-blue"><i class="bi bi-person-badge"></i></div><div><div class="value" th:text="${stats['activeDoctors']}">0</div><div class="label">Active doctors</div></div></div></div>
+<div class="col-6 col-xl-3"><div class="card stat-card"><div class="icon icon-violet"><i class="bi bi-calendar-check"></i></div><div><div class="value" th:text="${stats['todayAppointments']}">0</div><div class="label">Appointments today</div></div></div></div>
+<div class="col-6 col-xl-3"><div class="card stat-card"><div class="icon icon-amber"><i class="bi bi-clipboard2-pulse"></i></div><div><div class="value" th:text="${stats['pendingTests']}">0</div><div class="label">Open diagnostic tests</div></div></div></div>
+<div class="col-6 col-xl-3"><div class="card stat-card"><div class="icon icon-slate"><i class="bi bi-building"></i></div><div><div class="value" th:text="${stats['totalDepartments']}">0</div><div class="label">Departments</div></div></div></div>
+<div class="col-6 col-xl-3"><div class="card stat-card"><div class="icon icon-rose"><i class="bi bi-person-workspace"></i></div><div><div class="value" th:text="${stats['totalStaff']}">0</div><div class="label">Staff members</div></div></div></div>
+<div class="col-6 col-xl-3"><div class="card stat-card"><div class="icon icon-blue"><i class="bi bi-shield-lock"></i></div><div><div class="value" th:text="${stats['totalUsers']}">0</div><div class="label">User accounts</div></div></div></div>
+<div class="col-6 col-xl-3"><div class="card stat-card"><div class="icon icon-teal"><i class="bi bi-clipboard2-check"></i></div><div><div class="value" th:text="${stats['completedTests']}">0</div><div class="label">Completed tests</div></div></div></div>
+</div>
+<div class="row g-3">
+<div class="col-lg-5"><div class="card h-100"><div class="card-header">Appointments by status</div><div class="card-body">
+<div class="mb-3"><div class="d-flex justify-content-between small"><span>Scheduled</span><span th:text="${stats['scheduled']}">0</span></div>
+<div class="progress"><div class="progress-bar bg-primary" th:style="'width:' + ${stats['scheduledPct']} + '%'"></div></div></div>
+<div class="mb-3"><div class="d-flex justify-content-between small"><span>Completed</span><span th:text="${stats['completed']}">0</span></div>
+<div class="progress"><div class="progress-bar bg-success" th:style="'width:' + ${stats['completedPct']} + '%'"></div></div></div>
+<div><div class="d-flex justify-content-between small"><span>Cancelled</span><span th:text="${stats['cancelled']}">0</span></div>
+<div class="progress"><div class="progress-bar bg-secondary" th:style="'width:' + ${stats['cancelledPct']} + '%'"></div></div></div>
+</div></div></div>
+<div class="col-lg-7"><div class="card h-100"><div class="card-header">Department summary</div><div class="table-responsive">
+<table class="table"><thead><tr><th>Department</th><th>Doctors</th><th>Staff</th><th>Active appointments</th></tr></thead><tbody>
+<tr th:each="r : ${stats['departmentRows']}"><td th:text="${r['name']}">Dept</td><td th:text="${r['doctors']}">0</td><td th:text="${r['staff']}">0</td><td th:text="${r['appointments']}">0</td></tr>
+</tbody></table></div></div></div>
+<div class="col-12"><div class="card"><div class="card-header d-flex justify-content-between"><span>Today's appointments</span><a th:href="@{/admin/schedule}">Full schedule</a></div><div class="table-responsive">
+<table class="table table-hover">
+<thead><tr><th>Time</th><th>Patient</th><th>Doctor</th><th>Status</th><th></th></tr></thead>
+<tbody>
+<tr th:each="a : ${stats['todayList']}">
+<td th:text="${#temporals.format(a.startTime, 'HH:mm')}">09:00</td>
+<td th:text="${a.patient.fullName}">Patient</td>
+<td th:text="${a.doctor.fullName}">Doctor</td>
+<td><span th:class="${'badge ' + a.status.badgeClass}" th:text="${a.status.label}">Scheduled</span></td>
+<td class="text-end"><a class="btn btn-sm btn-outline-primary" th:href="@{/appointments/{id}(id=${a.id})}">Open</a></td>
+</tr>
+<tr th:if="${#lists.isEmpty(stats['todayList'])}"><td colspan="5"><div class="empty-state"><i class="bi bi-calendar-x"></i>No appointments.</div></td></tr>
+</tbody></table>
+</div></div></div>
+</div>
+</main>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</div>
+</div>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

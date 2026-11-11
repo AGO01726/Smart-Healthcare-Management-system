@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head('Diagnostics')}"></head>
+<body>
+<div class="app-shell">
+<aside th:replace="~{fragments/layout :: sidebar('diagnostics')}"></aside>
+<div class="app-main">
+<header th:replace="~{fragments/layout :: topbar('Diagnostics')}"></header>
+<main class="content">
+<div th:replace="~{fragments/layout :: flash}"></div>
+<div class="page-title-row"><h2>Diagnostic tests</h2>
+  <a class="btn btn-primary" sec:authorize="hasAnyRole('ADMIN','DOCTOR')" th:href="@{/diagnostics/new}"><i class="bi bi-plus-lg me-1"></i> Request test</a></div>
+<div class="demo-banner mb-3"><i class="bi bi-info-circle me-1"></i> Results in this demo are clearly labelled <strong>sample data</strong> and are fictional.</div>
+<div class="card mb-3"><div class="card-body">
+  <form class="row g-2 filter-bar" method="get" th:action="@{/diagnostics}">
+    <div class="col-md-5"><input type="search" class="form-control" name="q" th:value="${q}" placeholder="Test name, patient name or ID"></div>
+    <div class="col-md-3"><select class="form-select" name="status"><option value="">All statuses</option>
+      <option th:each="s : ${statuses}" th:value="${s}" th:text="${s.label}" th:selected="${status == s}">s</option></select></div>
+    <div class="col-auto"><button class="btn btn-primary" type="submit"><i class="bi bi-funnel me-1"></i> Filter</button>
+      <a class="btn btn-outline-secondary" th:href="@{/diagnostics}">Reset</a></div>
+  </form></div></div>
+<div class="card"><div class="table-responsive">
+<table class="table table-hover">
+  <thead><tr><th>Requested</th><th>Test</th><th>Category</th><th>Patient</th><th>Requested by</th><th>Status</th><th></th></tr></thead>
+  <tbody>
+    <tr th:each="t : ${page.content}">
+      <td th:text="${#temporals.format(t.requestedAt,'dd MMM yyyy')}">d</td>
+      <td class="fw-semibold" th:text="${t.testName}">t</td><td th:text="${t.category}">c</td>
+      <td th:text="${t.patient.fullName}">p</td><td th:text="${t.requestedBy.fullName}">dr</td>
+      <td><span th:class="${'badge ' + t.status.badgeClass}" th:text="${t.status.label}">s</span></td>
+      <td class="text-end"><a class="btn btn-sm btn-outline-primary" th:href="@{/diagnostics/{id}(id=${t.id})}">Open</a></td></tr>
+    <tr th:if="${page.empty}"><td colspan="7"><div class="empty-state"><i class="bi bi-clipboard2-x"></i>No diagnostic tests found.</div></td></tr>
+  </tbody></table></div>
+<div class="card-footer bg-transparent d-flex justify-content-between align-items-center flex-wrap gap-2">
+  <span class="small text-muted" th:text="${page.totalElements} + ' test(s)'">0</span>
+  <nav th:replace="~{fragments/layout :: pagination(${page}, ${path}, ${qs})}"></nav></div></div>
+</main>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</div>
+</div>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

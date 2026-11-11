@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head('Patient form')}"></head>
+<body>
+<div class="app-shell">
+<aside th:replace="~{fragments/layout :: sidebar('patients')}"></aside>
+<div class="app-main">
+<header th:replace="~{fragments/layout :: topbar('Patient form')}"></header>
+<main class="content">
+<div th:replace="~{fragments/layout :: flash}"></div>
+<div class="page-title-row"><h2 th:text="${editing} ? 'Edit patient' : 'Register new patient'">Patient</h2>
+  <a class="btn btn-outline-secondary" th:href="@{/patients}">Back to list</a></div>
+<div class="card"><div class="card-body">
+<form th:action="${editing} ? @{/patients/{id}(id=${patientId})} : @{/patients}" th:object="${form}" method="post" novalidate>
+  <div class="row g-3">
+    <div th:replace="~{fragments/forms :: text('First name *','firstName','col-md-6')}"></div>
+    <div th:replace="~{fragments/forms :: text('Last name *','lastName','col-md-6')}"></div>
+    <div class="col-md-4">
+      <label class="form-label" for="gender">Gender *</label>
+      <select class="form-select" th:field="*{gender}" th:errorclass="is-invalid">
+        <option value="">Select...</option>
+        <option th:each="g : ${genders}" th:value="${g}" th:text="${g.label}">Male</option>
+      </select>
+      <div class="invalid-feedback" th:errors="*{gender}"></div>
+    </div>
+    <div th:replace="~{fragments/forms :: date('Date of birth *','dateOfBirth','col-md-4')}"></div>
+    <div class="col-md-4">
+      <label class="form-label" for="bloodGroup">Blood group</label>
+      <select class="form-select" th:field="*{bloodGroup}" th:errorclass="is-invalid">
+        <option value="">Unknown</option>
+        <option th:each="b : ${bloodGroups}" th:value="${b}" th:text="${b}">O+</option>
+      </select>
+      <div class="invalid-feedback" th:errors="*{bloodGroup}"></div>
+    </div>
+    <div th:replace="~{fragments/forms :: text('Phone *','phone','col-md-6')}"></div>
+    <div th:replace="~{fragments/forms :: email('Email','email','col-md-6')}"></div>
+    <div th:replace="~{fragments/forms :: text('Address','address','col-12')}"></div>
+    <div th:replace="~{fragments/forms :: text('Allergies','allergies','col-md-6')}"></div>
+    <div th:replace="~{fragments/forms :: text('Emergency contact','emergencyContact','col-md-6')}"></div>
+  </div>
+  <th:block th:unless="${editing}">
+    <hr class="my-4">
+    <h3 class="h6">Optional patient portal login</h3>
+    <p class="text-muted small">Fill both fields (and an email above) to let the patient sign in. Leave empty to skip.</p>
+    <div class="row g-3">
+      <div th:replace="~{fragments/forms :: text('Username','username','col-md-6')}"></div>
+      <div th:replace="~{fragments/forms :: password('Password (min 8, letter + digit)','password','col-md-6')}"></div>
+    </div>
+  </th:block>
+  <div class="mt-4 d-flex gap-2">
+    <button class="btn btn-primary" type="submit"><i class="bi bi-save me-1"></i> Save</button>
+    <a class="btn btn-outline-secondary" th:href="@{/patients}">Cancel</a>
+  </div>
+</form></div></div>
+</main>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</div>
+</div>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

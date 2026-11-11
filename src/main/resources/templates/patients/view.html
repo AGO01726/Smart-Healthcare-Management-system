@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head('Patient record')}"></head>
+<body>
+<div class="app-shell">
+<aside th:replace="~{fragments/layout :: sidebar('patients')}"></aside>
+<div class="app-main">
+<header th:replace="~{fragments/layout :: topbar('Patient record')}"></header>
+<main class="content">
+<div th:replace="~{fragments/layout :: flash}"></div>
+<div class="page-title-row">
+  <h2><span th:text="${patient.fullName}">Name</span> <small class="text-muted" th:text="${patient.patientCode}">PAT-1</small></h2>
+  <div class="d-flex flex-wrap gap-2">
+    <a class="btn btn-primary" sec:authorize="hasAnyRole('ADMIN','RECEPTIONIST')" th:href="@{/appointments/new(patientId=${patient.id})}"><i class="bi bi-calendar-plus me-1"></i> Book appointment</a>
+    <a class="btn btn-outline-primary" sec:authorize="hasAnyRole('ADMIN','DOCTOR')" th:href="@{/diagnostics/new(patientId=${patient.id})}"><i class="bi bi-clipboard2-pulse me-1"></i> Request test</a>
+    <a class="btn btn-outline-secondary" sec:authorize="hasAnyRole('ADMIN','RECEPTIONIST')" th:href="@{/patients/{id}/edit(id=${patient.id})}"><i class="bi bi-pencil me-1"></i> Edit</a>
+    <form sec:authorize="hasRole('ADMIN')" th:action="@{/patients/{id}/delete(id=${patient.id})}" method="post" data-confirm="Delete this patient permanently?">
+      <button class="btn btn-outline-danger" type="submit"><i class="bi bi-trash me-1"></i> Delete</button></form>
+  </div>
+</div>
+<div class="row g-3">
+  <div class="col-lg-4"><div class="card h-100"><div class="card-header">Details</div><div class="card-body">
+    <dl class="detail-list mb-0">
+      <dt>Gender / Age</dt><dd th:text="${patient.gender.label + ' / ' + patient.age + ' years'}">x</dd>
+      <dt>Date of birth</dt><dd th:text="${#temporals.format(patient.dateOfBirth,'dd MMM yyyy')}">x</dd>
+      <dt>Phone</dt><dd th:text="${patient.phone}">x</dd>
+      <dt>Email</dt><dd th:text="${patient.email} ?: '-'">x</dd>
+      <dt>Blood group</dt><dd th:text="${patient.bloodGroup} ?: '-'">x</dd>
+      <dt>Allergies</dt><dd th:text="${patient.allergies} ?: '-'">x</dd>
+      <dt>Address</dt><dd th:text="${patient.address} ?: '-'">x</dd>
+      <dt>Emergency contact</dt><dd th:text="${patient.emergencyContact} ?: '-'">x</dd>
+      <dt>Portal login</dt><dd th:text="${patient.user != null} ? 'Yes' : 'No'">x</dd>
+    </dl></div></div></div>
+  <div class="col-lg-8">
+    <div class="card mb-3"><div class="card-header">Appointments</div><div class="table-responsive">
+      <table class="table"><thead><tr><th>Date</th><th>Time</th><th>Doctor</th><th>Status</th><th></th></tr></thead><tbody>
+        <tr th:each="a : ${appointments}">
+          <td th:text="${#temporals.format(a.appointmentDate,'dd MMM yyyy')}">d</td>
+          <td th:text="${#temporals.format(a.startTime,'HH:mm')}">t</td>
+          <td th:text="${a.doctor.fullName}">dr</td>
+          <td><span th:class="${'badge ' + a.status.badgeClass}" th:text="${a.status.label}">s</span></td>
+          <td class="text-end"><a class="btn btn-sm btn-outline-primary" th:href="@{/appointments/{id}(id=${a.id})}">Open</a></td></tr>
+        <tr th:if="${#lists.isEmpty(appointments)}"><td colspan="5"><div class="empty-state">No appointments.</div></td></tr>
+      </tbody></table></div></div>
+    <div class="card"><div class="card-header">Diagnostic tests</div><div class="table-responsive">
+      <table class="table"><thead><tr><th>Test</th><th>Requested</th><th>Status</th><th></th></tr></thead><tbody>
+        <tr th:each="t : ${tests}">
+          <td th:text="${t.testName}">t</td>
+          <td th:text="${#temporals.format(t.requestedAt,'dd MMM yyyy')}">d</td>
+          <td><span th:class="${'badge ' + t.status.badgeClass}" th:text="${t.status.label}">s</span></td>
+          <td class="text-end"><a class="btn btn-sm btn-outline-primary" th:href="@{/diagnostics/{id}(id=${t.id})}">Open</a></td></tr>
+        <tr th:if="${#lists.isEmpty(tests)}"><td colspan="4"><div class="empty-state">No tests.</div></td></tr>
+      </tbody></table></div></div>
+  </div>
+</div>
+</main>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</div>
+</div>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

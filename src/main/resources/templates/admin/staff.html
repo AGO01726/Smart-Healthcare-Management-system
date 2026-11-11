@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head('Staff')}"></head>
+<body>
+<div class="app-shell">
+<aside th:replace="~{fragments/layout :: sidebar('staff')}"></aside>
+<div class="app-main">
+<header th:replace="~{fragments/layout :: topbar('Staff')}"></header>
+<main class="content">
+<div th:replace="~{fragments/layout :: flash}"></div>
+<div class="row g-3">
+  <div class="col-lg-4"><div class="card"><div class="card-header" th:text="${form.id == null} ? 'Add staff member' : 'Edit staff member'">Add</div><div class="card-body">
+    <form th:action="@{/admin/staff}" th:object="${form}" method="post" novalidate>
+      <input type="hidden" th:field="*{id}">
+      <div class="row g-3">
+        <div th:replace="~{fragments/forms :: text('Full name *','fullName','col-12')}"></div>
+        <div th:replace="~{fragments/forms :: text('Designation *','designation','col-12')}"></div>
+        <div class="col-12"><label class="form-label" for="departmentId">Department</label>
+          <select class="form-select" th:field="*{departmentId}"><option value="">None</option>
+            <option th:each="d : ${departments}" th:value="${d.id}" th:text="${d.name}">d</option></select></div>
+        <div th:replace="~{fragments/forms :: text('Phone *','phone','col-12')}"></div>
+        <div th:replace="~{fragments/forms :: email('Email','email','col-12')}"></div>
+        <div th:replace="~{fragments/forms :: date('Joined on *','joinedDate','col-12')}"></div>
+        <div class="col-12"><div class="form-check form-switch"><input class="form-check-input" type="checkbox" th:field="*{active}"><label class="form-check-label" for="active">Active</label></div></div>
+      </div>
+      <div class="mt-3 d-flex gap-2"><button class="btn btn-primary" type="submit"><i class="bi bi-save me-1"></i> Save</button>
+        <a class="btn btn-outline-secondary" th:if="${form.id != null}" th:href="@{/admin/staff}">Cancel</a></div>
+    </form></div></div></div>
+  <div class="col-lg-8">
+    <form class="mb-3" method="get" th:action="@{/admin/staff}"><div class="input-group">
+      <input type="search" class="form-control" name="q" th:value="${q}" placeholder="Search by name or designation">
+      <button class="btn btn-primary" type="submit"><i class="bi bi-search"></i></button></div></form>
+    <div class="card"><div class="table-responsive">
+    <table class="table"><thead><tr><th>Name</th><th>Designation</th><th>Department</th><th>Phone</th><th>Status</th><th></th></tr></thead><tbody>
+      <tr th:each="s : ${staffList}">
+        <td class="fw-semibold" th:text="${s.fullName}">n</td><td th:text="${s.designation}">d</td>
+        <td th:text="${s.department != null} ? ${s.department.name} : '-'">dept</td><td th:text="${s.phone}">p</td>
+        <td><span class="badge" th:classappend="${s.active} ? 'bg-success' : 'bg-secondary'" th:text="${s.active} ? 'Active' : 'Inactive'">a</span></td>
+        <td class="text-end text-nowrap">
+          <a class="btn btn-sm btn-outline-secondary" th:href="@{/admin/staff(edit=${s.id})}">Edit</a>
+          <form class="d-inline" th:action="@{/admin/staff/{id}/delete(id=${s.id})}" method="post" data-confirm="Remove this staff member?">
+            <button class="btn btn-sm btn-outline-danger" type="submit">Delete</button></form></td></tr>
+      <tr th:if="${#lists.isEmpty(staffList)}"><td colspan="6"><div class="empty-state">No staff found.</div></td></tr>
+    </tbody></table></div></div></div>
+</div>
+</main>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</div>
+</div>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

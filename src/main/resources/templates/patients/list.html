@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head('Patients')}"></head>
+<body>
+<div class="app-shell">
+<aside th:replace="~{fragments/layout :: sidebar('patients')}"></aside>
+<div class="app-main">
+<header th:replace="~{fragments/layout :: topbar('Patients')}"></header>
+<main class="content">
+<div th:replace="~{fragments/layout :: flash}"></div>
+<div class="page-title-row">
+  <h2>Patient records</h2>
+  <a class="btn btn-primary" sec:authorize="hasAnyRole('ADMIN','RECEPTIONIST')" th:href="@{/patients/new}"><i class="bi bi-person-plus me-1"></i> Register patient</a>
+</div>
+<div class="card mb-3"><div class="card-body">
+  <form class="row g-2 filter-bar" method="get" th:action="@{/patients}">
+    <div class="col-md-8"><input type="search" class="form-control" name="q" th:value="${q}" placeholder="Search by name, patient ID, phone or email"></div>
+    <div class="col-auto"><button class="btn btn-primary" type="submit"><i class="bi bi-search me-1"></i> Search</button>
+      <a class="btn btn-outline-secondary" th:href="@{/patients}">Reset</a></div>
+  </form>
+</div></div>
+<div class="card"><div class="table-responsive">
+<table class="table table-hover">
+  <thead><tr><th>ID</th><th>Name</th><th>Gender / Age</th><th>Phone</th><th>Blood</th><th></th></tr></thead>
+  <tbody>
+    <tr th:each="p : ${page.content}">
+      <td th:text="${p.patientCode}">PAT-000001</td>
+      <td class="fw-semibold" th:text="${p.fullName}">Name</td>
+      <td th:text="${p.gender.label + ' / ' + p.age}">Female / 30</td>
+      <td th:text="${p.phone}">phone</td>
+      <td th:text="${p.bloodGroup} ?: '-'">O+</td>
+      <td class="text-end">
+        <a class="btn btn-sm btn-outline-primary" th:href="@{/patients/{id}(id=${p.id})}">View</a>
+        <a class="btn btn-sm btn-outline-secondary" sec:authorize="hasAnyRole('ADMIN','RECEPTIONIST')" th:href="@{/patients/{id}/edit(id=${p.id})}">Edit</a>
+      </td>
+    </tr>
+    <tr th:if="${page.empty}"><td colspan="6"><div class="empty-state"><i class="bi bi-people"></i>No patients found.</div></td></tr>
+  </tbody>
+</table></div>
+<div class="card-footer bg-transparent d-flex justify-content-between align-items-center flex-wrap gap-2">
+  <span class="small text-muted" th:text="${page.totalElements} + ' patient(s)'">0 patients</span>
+  <nav th:replace="~{fragments/layout :: pagination(${page}, ${path}, ${qs})}"></nav>
+</div></div>
+</main>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</div>
+</div>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

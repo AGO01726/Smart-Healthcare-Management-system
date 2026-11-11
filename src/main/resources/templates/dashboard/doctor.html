@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head('Doctor Dashboard')}"></head>
+<body>
+<div class="app-shell">
+<aside th:replace="~{fragments/layout :: sidebar('dashboard')}"></aside>
+<div class="app-main">
+<header th:replace="~{fragments/layout :: topbar('Doctor Dashboard')}"></header>
+<main class="content">
+<div th:replace="~{fragments/layout :: flash}"></div>
+<div class="alert alert-warning" th:if="${stats['noProfile']}">No doctor profile is linked to this account. Please contact the administrator.</div>
+<th:block th:unless="${stats['noProfile']}">
+<div class="row g-3 mb-3">
+<div class="col-6 col-xl-3"><div class="card stat-card"><div class="icon icon-violet"><i class="bi bi-calendar-day"></i></div><div><div class="value" th:text="${stats['todayAppointments']}">0</div><div class="label">Appointments today</div></div></div></div>
+<div class="col-6 col-xl-3"><div class="card stat-card"><div class="icon icon-blue"><i class="bi bi-calendar-week"></i></div><div><div class="value" th:text="${stats['upcoming']}">0</div><div class="label">Upcoming scheduled</div></div></div></div>
+<div class="col-6 col-xl-3"><div class="card stat-card"><div class="icon icon-teal"><i class="bi bi-check2-circle"></i></div><div><div class="value" th:text="${stats['completed']}">0</div><div class="label">Completed consultations</div></div></div></div>
+<div class="col-6 col-xl-3"><div class="card stat-card"><div class="icon icon-amber"><i class="bi bi-clipboard2-pulse"></i></div><div><div class="value" th:text="${stats['pendingTests']}">0</div><div class="label">My open test requests</div></div></div></div>
+</div>
+<div class="row g-3">
+<div class="col-lg-6"><div class="card h-100"><div class="card-header">Today</div><div class="table-responsive">
+<table class="table table-hover">
+<thead><tr><th>Time</th><th>Patient</th><th>Doctor</th><th>Status</th><th></th></tr></thead>
+<tbody>
+<tr th:each="a : ${stats['todayList']}">
+<td th:text="${#temporals.format(a.startTime, 'HH:mm')}">09:00</td>
+<td th:text="${a.patient.fullName}">Patient</td>
+<td th:text="${a.doctor.fullName}">Doctor</td>
+<td><span th:class="${'badge ' + a.status.badgeClass}" th:text="${a.status.label}">Scheduled</span></td>
+<td class="text-end"><a class="btn btn-sm btn-outline-primary" th:href="@{/appointments/{id}(id=${a.id})}">Open</a></td>
+</tr>
+<tr th:if="${#lists.isEmpty(stats['todayList'])}"><td colspan="5"><div class="empty-state"><i class="bi bi-calendar-x"></i>No appointments.</div></td></tr>
+</tbody></table>
+</div></div></div>
+<div class="col-lg-6"><div class="card h-100"><div class="card-header">Next scheduled</div><div class="table-responsive">
+<table class="table"><thead><tr><th>Date</th><th>Time</th><th>Patient</th><th></th></tr></thead><tbody>
+<tr th:each="a : ${stats['upcomingList']}"><td th:text="${#temporals.format(a.appointmentDate,'dd MMM yyyy')}">date</td>
+<td th:text="${#temporals.format(a.startTime,'HH:mm')}">time</td><td th:text="${a.patient.fullName}">p</td>
+<td class="text-end"><a class="btn btn-sm btn-outline-primary" th:href="@{/appointments/{id}(id=${a.id})}">Open</a></td></tr>
+<tr th:if="${#lists.isEmpty(stats['upcomingList'])}"><td colspan="4"><div class="empty-state">Nothing scheduled.</div></td></tr>
+</tbody></table></div></div></div>
+</div>
+</th:block>
+</main>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</div>
+</div>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head('Reschedule appointment')}"></head>
+<body>
+<div class="app-shell">
+<aside th:replace="~{fragments/layout :: sidebar('appointments')}"></aside>
+<div class="app-main">
+<header th:replace="~{fragments/layout :: topbar('Reschedule appointment')}"></header>
+<main class="content">
+<div th:replace="~{fragments/layout :: flash}"></div>
+<div class="page-title-row"><h2>Reschedule appointment</h2>
+  <a class="btn btn-outline-secondary" th:href="@{/appointments/{id}(id=${appointment.id})}">Back</a></div>
+<div class="card"><div class="card-body">
+<p>Patient <strong th:text="${appointment.patient.fullName}">P</strong> with <strong th:text="${appointment.doctor.fullName}">Dr</strong>
+ (currently <span th:text="${#temporals.format(appointment.appointmentDate,'dd MMM yyyy') + ' ' + #temporals.format(appointment.startTime,'HH:mm')}">date</span>).
+ Slot length: <span th:text="${slotMinutes}">30</span> minutes.</p>
+<form th:action="@{/appointments/{id}/reschedule(id=${appointment.id})}" th:object="${form}" method="post" novalidate>
+  <div class="row g-3">
+    <div th:replace="~{fragments/forms :: date('New date *','appointmentDate','col-md-3')}"></div>
+    <div th:replace="~{fragments/forms :: time('New start time *','startTime','col-md-3')}"></div>
+    <div class="col-12"><label class="form-label">Free slots</label>
+      <div id="slotBox" th:attr="data-doctor-id=${appointment.doctor.id},data-exclude-id=${appointment.id}"></div></div>
+  </div>
+  <div class="mt-4 d-flex gap-2"><button class="btn btn-primary" type="submit"><i class="bi bi-calendar2-check me-1"></i> Reschedule</button>
+    <a class="btn btn-outline-secondary" th:href="@{/appointments/{id}(id=${appointment.id})}">Cancel</a></div>
+</form></div></div>
+</main>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</div>
+</div>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

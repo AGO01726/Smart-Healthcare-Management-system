@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head('Doctors')}"></head>
+<body>
+<div class="app-shell">
+<aside th:replace="~{fragments/layout :: sidebar('doctors')}"></aside>
+<div class="app-main">
+<header th:replace="~{fragments/layout :: topbar('Doctors')}"></header>
+<main class="content">
+<div th:replace="~{fragments/layout :: flash}"></div>
+<div class="page-title-row"><h2>Doctors</h2>
+  <a class="btn btn-primary" sec:authorize="hasRole('ADMIN')" th:href="@{/doctors/new}"><i class="bi bi-plus-lg me-1"></i> Add doctor</a></div>
+<div class="card mb-3"><div class="card-body">
+  <form class="row g-2 filter-bar" method="get" th:action="@{/doctors}">
+    <div class="col-md-5"><input type="search" class="form-control" name="q" th:value="${q}" placeholder="Search by name or specialization"></div>
+    <div class="col-md-4"><select class="form-select" name="departmentId">
+      <option value="">All departments</option>
+      <option th:each="d : ${departments}" th:value="${d.id}" th:text="${d.name}" th:selected="${departmentId != null and departmentId == d.id}">Dept</option>
+    </select></div>
+    <div class="col-auto"><button class="btn btn-primary" type="submit"><i class="bi bi-funnel me-1"></i> Filter</button>
+      <a class="btn btn-outline-secondary" th:href="@{/doctors}">Reset</a></div>
+  </form></div></div>
+<div class="row g-3">
+  <div class="col-md-6 col-xl-4" th:each="d : ${doctors}"><div class="card h-100"><div class="card-body">
+    <div class="d-flex justify-content-between align-items-start">
+      <h3 class="h6 mb-1" th:text="${d.fullName}">Dr</h3>
+      <span class="badge" th:classappend="${d.active} ? 'bg-success' : 'bg-secondary'" th:text="${d.active} ? 'Active' : 'Inactive'">Active</span></div>
+    <div class="text-muted small mb-2"><span th:text="${d.specialization}">Spec</span> &middot; <span th:text="${d.department.name}">Dept</span></div>
+    <div class="small"><i class="bi bi-calendar3 me-1"></i><span th:text="${d.availableDaysLabel}">Mon</span></div>
+    <div class="small mb-3"><i class="bi bi-clock me-1"></i><span th:text="${#temporals.format(d.availableFrom,'HH:mm') + ' - ' + #temporals.format(d.availableTo,'HH:mm')}">09:00 - 17:00</span></div>
+    <a class="btn btn-sm btn-outline-primary" th:href="@{/doctors/{id}(id=${d.id})}">Profile</a>
+    <a class="btn btn-sm btn-primary" th:if="${d.active}" sec:authorize="hasAnyRole('ADMIN','RECEPTIONIST','PATIENT')" th:href="@{/appointments/new(doctorId=${d.id})}">Book</a>
+  </div></div></div>
+  <div class="col-12" th:if="${#lists.isEmpty(doctors)}"><div class="card"><div class="empty-state"><i class="bi bi-person-badge"></i>No doctors found.</div></div></div>
+</div>
+</main>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</div>
+</div>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head('Appointment')}"></head>
+<body>
+<div class="app-shell">
+<aside th:replace="~{fragments/layout :: sidebar('appointments')}"></aside>
+<div class="app-main">
+<header th:replace="~{fragments/layout :: topbar('Appointment')}"></header>
+<main class="content">
+<div th:replace="~{fragments/layout :: flash}"></div>
+<div class="page-title-row"><h2>Appointment #<span th:text="${appointment.id}">1</span>
+  <span th:class="${'badge ms-2 ' + appointment.status.badgeClass}" th:text="${appointment.status.label}">s</span></h2>
+  <a class="btn btn-outline-secondary" th:href="@{/appointments}">Back to list</a></div>
+<div class="row g-3">
+  <div class="col-lg-7"><div class="card h-100"><div class="card-header">Details</div><div class="card-body"><dl class="detail-list row mb-0">
+    <div class="col-md-6"><dt>Patient</dt><dd><a th:href="@{/patients/{id}(id=${appointment.patient.id})}" sec:authorize="hasAnyRole('ADMIN','RECEPTIONIST','DOCTOR')" th:text="${appointment.patient.fullName}">p</a>
+      <span sec:authorize="hasRole('PATIENT')" th:text="${appointment.patient.fullName}">p</span></dd></div>
+    <div class="col-md-6"><dt>Doctor</dt><dd><a th:href="@{/doctors/{id}(id=${appointment.doctor.id})}" th:text="${appointment.doctor.fullName}">dr</a></dd></div>
+    <div class="col-md-6"><dt>Date</dt><dd th:text="${#temporals.format(appointment.appointmentDate,'EEEE, dd MMM yyyy')}">d</dd></div>
+    <div class="col-md-6"><dt>Time</dt><dd th:text="${#temporals.format(appointment.startTime,'HH:mm') + ' - ' + #temporals.format(appointment.endTime,'HH:mm')}">t</dd></div>
+    <div class="col-12"><dt>Reason</dt><dd th:text="${appointment.reason}">r</dd></div>
+    <div class="col-12"><dt>Doctor's notes</dt><dd th:text="${appointment.notes} ?: '-'">n</dd></div>
+  </dl></div></div></div>
+  <div class="col-lg-5"><div class="card h-100"><div class="card-header">Actions</div><div class="card-body d-grid gap-2"
+     th:with="scheduled=${appointment.status.name() == 'SCHEDULED'}">
+    <a class="btn btn-outline-primary" th:if="${scheduled}" sec:authorize="hasAnyRole('ADMIN','RECEPTIONIST','PATIENT')" th:href="@{/appointments/{id}/reschedule(id=${appointment.id})}"><i class="bi bi-calendar2-week me-1"></i> Reschedule</a>
+    <form th:if="${scheduled}" th:action="@{/appointments/{id}/cancel(id=${appointment.id})}" method="post" data-confirm="Cancel this appointment?">
+      <button class="btn btn-outline-danger w-100" type="submit"><i class="bi bi-x-circle me-1"></i> Cancel appointment</button></form>
+    <form th:if="${scheduled}" sec:authorize="hasAnyRole('ADMIN','DOCTOR')" th:action="@{/appointments/{id}/complete(id=${appointment.id})}" method="post">
+      <label class="form-label" for="notes">Consultation notes</label>
+      <textarea class="form-control mb-2" id="notes" name="notes" rows="3" maxlength="500"></textarea>
+      <button class="btn btn-success w-100" type="submit"><i class="bi bi-check2-circle me-1"></i> Mark as completed</button></form>
+    <a class="btn btn-outline-primary" sec:authorize="hasAnyRole('ADMIN','DOCTOR')" th:href="@{/diagnostics/new(patientId=${appointment.patient.id})}"><i class="bi bi-clipboard2-pulse me-1"></i> Request diagnostic test</a>
+    <div class="text-muted small" th:unless="${scheduled}">This appointment is closed; no further changes are possible.</div>
+  </div></div></div>
+</div>
+</main>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</div>
+</div>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

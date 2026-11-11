@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head('Diagnostic test')}"></head>
+<body>
+<div class="app-shell">
+<aside th:replace="~{fragments/layout :: sidebar('diagnostics')}"></aside>
+<div class="app-main">
+<header th:replace="~{fragments/layout :: topbar('Diagnostic test')}"></header>
+<main class="content">
+<div th:replace="~{fragments/layout :: flash}"></div>
+<div class="page-title-row"><h2><span th:text="${test.testName}">Test</span>
+  <span th:class="${'badge ms-2 ' + test.status.badgeClass}" th:text="${test.status.label}">s</span></h2>
+  <a class="btn btn-outline-secondary" th:href="@{/diagnostics}">Back to list</a></div>
+<div class="row g-3">
+  <div class="col-lg-7">
+    <div class="card mb-3"><div class="card-header">Request</div><div class="card-body"><dl class="detail-list row mb-0">
+      <div class="col-md-6"><dt>Patient</dt><dd th:text="${test.patient.fullName + ' (' + test.patient.patientCode + ')'}">p</dd></div>
+      <div class="col-md-6"><dt>Requested by</dt><dd th:text="${test.requestedBy.fullName}">dr</dd></div>
+      <div class="col-md-6"><dt>Category</dt><dd th:text="${test.category}">c</dd></div>
+      <div class="col-md-6"><dt>Requested at</dt><dd th:text="${#temporals.format(test.requestedAt,'dd MMM yyyy HH:mm')}">d</dd></div>
+      <div class="col-12"><dt>Clinical notes</dt><dd th:text="${test.clinicalNotes} ?: '-'">n</dd></div></dl></div></div>
+    <div class="card"><div class="card-header">Result</div><div class="card-body">
+      <th:block th:if="${test.status.name() == 'COMPLETED'}">
+        <div th:if="${canViewResult}">
+          <p class="mb-2" th:text="${test.resultSummary}">result</p>
+          <div class="small text-muted">Entered by <span th:text="${test.resultEnteredBy}">x</span> on
+            <span th:text="${#temporals.format(test.completedAt,'dd MMM yyyy HH:mm')}">d</span></div></div>
+        <div th:unless="${canViewResult}" class="text-muted"><i class="bi bi-lock me-1"></i> Result content is restricted for your role.</div>
+      </th:block>
+      <div th:unless="${test.status.name() == 'COMPLETED'}" class="text-muted">No result yet.</div>
+    </div></div>
+  </div>
+  <div class="col-lg-5">
+    <div class="card mb-3" th:if="${!test.status.nextStatuses().isEmpty()}" sec:authorize="hasAnyRole('ADMIN','RECEPTIONIST','DOCTOR')">
+      <div class="card-header">Update status</div><div class="card-body d-grid gap-2">
+        <form th:each="s : ${test.status.nextStatuses()}" th:action="@{/diagnostics/{id}/status(id=${test.id})}" method="post"
+              th:attr="data-confirm=${s.name() == 'CANCELLED'} ? 'Cancel this test request?' : null">
+          <input type="hidden" name="status" th:value="${s}">
+          <button type="submit" class="btn w-100" th:classappend="${s.name() == 'CANCELLED'} ? 'btn-outline-danger' : 'btn-outline-primary'"
+                  th:text="${'Mark as ' + s.label}">Mark</button></form>
+      </div></div>
+    <div class="card" th:if="${canEnterResult}">
+      <div class="card-header">Enter result</div><div class="card-body">
+        <form th:action="@{/diagnostics/{id}/result(id=${test.id})}" th:object="${resultForm}" method="post">
+          <textarea class="form-control mb-2" rows="5" maxlength="2000" required th:field="*{resultSummary}" placeholder="Enter findings. Use sample data only in this demo."></textarea>
+          <button class="btn btn-success w-100" type="submit"><i class="bi bi-check2-circle me-1"></i> Save result &amp; complete</button>
+        </form></div></div>
+  </div>
+</div>
+</main>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</div>
+</div>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

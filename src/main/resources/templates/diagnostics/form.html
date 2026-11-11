@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head('Request diagnostic test')}"></head>
+<body>
+<div class="app-shell">
+<aside th:replace="~{fragments/layout :: sidebar('diagnostics')}"></aside>
+<div class="app-main">
+<header th:replace="~{fragments/layout :: topbar('Request diagnostic test')}"></header>
+<main class="content">
+<div th:replace="~{fragments/layout :: flash}"></div>
+<div class="page-title-row"><h2>Request a diagnostic test</h2><a class="btn btn-outline-secondary" th:href="@{/diagnostics}">Back</a></div>
+<div class="card"><div class="card-body">
+<form th:action="@{/diagnostics}" th:object="${form}" method="post" novalidate>
+  <div class="row g-3">
+    <div class="col-md-6">
+      <label class="form-label" for="patientId">Patient *</label>
+      <select class="form-select" th:field="*{patientId}" th:errorclass="is-invalid">
+        <option value="">Select patient...</option>
+        <option th:each="p : ${patients}" th:value="${p.id}" th:text="${p.fullName + ' (' + p.patientCode + ')'}">p</option>
+      </select><div class="invalid-feedback" th:errors="*{patientId}"></div></div>
+    <div class="col-md-6" th:if="${doctors != null}">
+      <label class="form-label" for="doctorId">Requesting doctor *</label>
+      <select class="form-select" th:field="*{doctorId}">
+        <option value="">Select doctor...</option>
+        <option th:each="d : ${doctors}" th:value="${d.id}" th:text="${d.fullName}">dr</option></select></div>
+    <div th:replace="~{fragments/forms :: text('Test name *','testName','col-md-6')}"></div>
+    <div class="col-md-6">
+      <label class="form-label" for="category">Category *</label>
+      <select class="form-select" th:field="*{category}" th:errorclass="is-invalid">
+        <option value="">Select...</option>
+        <option th:each="c : ${categories}" th:value="${c}" th:text="${c}">c</option></select>
+      <div class="invalid-feedback" th:errors="*{category}"></div></div>
+    <div th:replace="~{fragments/forms :: textarea('Clinical notes','clinicalNotes','col-12')}"></div>
+  </div>
+  <div class="mt-4 d-flex gap-2"><button class="btn btn-primary" type="submit"><i class="bi bi-send me-1"></i> Submit request</button>
+    <a class="btn btn-outline-secondary" th:href="@{/diagnostics}">Cancel</a></div>
+</form></div></div>
+</main>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</div>
+</div>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

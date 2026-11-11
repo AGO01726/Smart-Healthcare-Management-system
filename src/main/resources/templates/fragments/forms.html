@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<!-- Form field fragments. Use inside a <form th:object="${form}"> and a <div class="row g-3">. -->
+
+<div th:fragment="text(label, field, cols)" th:class="${cols}">
+    <label class="form-label" th:for="${field}" th:text="${label}">Label</label>
+    <input type="text" class="form-control" th:field="*{__${field}__}" th:errorclass="is-invalid">
+    <div class="invalid-feedback" th:errors="*{__${field}__}"></div>
+</div>
+
+<div th:fragment="email(label, field, cols)" th:class="${cols}">
+    <label class="form-label" th:for="${field}" th:text="${label}">Label</label>
+    <input type="email" class="form-control" th:field="*{__${field}__}" th:errorclass="is-invalid">
+    <div class="invalid-feedback" th:errors="*{__${field}__}"></div>
+</div>
+
+<div th:fragment="password(label, field, cols)" th:class="${cols}">
+    <label class="form-label" th:for="${field}" th:text="${label}">Label</label>
+    <input type="password" class="form-control" autocomplete="new-password" th:field="*{__${field}__}" th:errorclass="is-invalid">
+    <div class="invalid-feedback" th:errors="*{__${field}__}"></div>
+</div>
+
+<div th:fragment="date(label, field, cols)" th:class="${cols}">
+    <label class="form-label" th:for="${field}" th:text="${label}">Label</label>
+    <input type="date" class="form-control" th:field="*{__${field}__}" th:errorclass="is-invalid">
+    <div class="invalid-feedback" th:errors="*{__${field}__}"></div>
+</div>
+
+<div th:fragment="time(label, field, cols)" th:class="${cols}">
+    <label class="form-label" th:for="${field}" th:text="${label}">Label</label>
+    <input type="time" class="form-control" th:field="*{__${field}__}" th:errorclass="is-invalid">
+    <div class="invalid-feedback" th:errors="*{__${field}__}"></div>
+</div>
+
+<div th:fragment="number(label, field, cols)" th:class="${cols}">
+    <label class="form-label" th:for="${field}" th:text="${label}">Label</label>
+    <input type="number" step="any" class="form-control" th:field="*{__${field}__}" th:errorclass="is-invalid">
+    <div class="invalid-feedback" th:errors="*{__${field}__}"></div>
+</div>
+
+<div th:fragment="textarea(label, field, cols)" th:class="${cols}">
+    <label class="form-label" th:for="${field}" th:text="${label}">Label</label>
+    <textarea rows="3" class="form-control" th:field="*{__${field}__}" th:errorclass="is-invalid"></textarea>
+    <div class="invalid-feedback" th:errors="*{__${field}__}"></div>
+</div>
+</body>
+</html>

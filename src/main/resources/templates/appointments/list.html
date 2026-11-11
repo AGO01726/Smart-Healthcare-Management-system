@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head('Appointments')}"></head>
+<body>
+<div class="app-shell">
+<aside th:replace="~{fragments/layout :: sidebar('appointments')}"></aside>
+<div class="app-main">
+<header th:replace="~{fragments/layout :: topbar('Appointments')}"></header>
+<main class="content">
+<div th:replace="~{fragments/layout :: flash}"></div>
+<div class="page-title-row"><h2>Appointments</h2>
+  <a class="btn btn-primary" sec:authorize="hasAnyRole('ADMIN','RECEPTIONIST','PATIENT')" th:href="@{/appointments/new}"><i class="bi bi-calendar-plus me-1"></i> Book appointment</a></div>
+<div class="card mb-3"><div class="card-body">
+  <form class="row g-2 filter-bar" method="get" th:action="@{/appointments}">
+    <div class="col-md-3" sec:authorize="hasAnyRole('ADMIN','RECEPTIONIST','DOCTOR')"><input type="search" class="form-control" name="q" th:value="${q}" placeholder="Patient name or ID"></div>
+    <div class="col-md-2"><select class="form-select" name="status"><option value="">All statuses</option>
+      <option th:each="s : ${statuses}" th:value="${s}" th:text="${s.label}" th:selected="${status == s}">s</option></select></div>
+    <div class="col-md-3" sec:authorize="hasAnyRole('ADMIN','RECEPTIONIST','PATIENT')"><select class="form-select" name="doctorId"><option value="">All doctors</option>
+      <option th:each="d : ${doctors}" th:value="${d.id}" th:text="${d.fullName}" th:selected="${doctorId != null and doctorId == d.id}">d</option></select></div>
+    <div class="col-md-2"><input type="date" class="form-control" name="date" th:value="${date}"></div>
+    <div class="col-auto"><button class="btn btn-primary" type="submit"><i class="bi bi-funnel me-1"></i> Filter</button>
+      <a class="btn btn-outline-secondary" th:href="@{/appointments}">Reset</a></div>
+  </form></div></div>
+<div class="card"><div class="table-responsive">
+<table class="table table-hover">
+  <thead><tr><th>Date</th><th>Time</th><th>Patient</th><th>Doctor</th><th>Reason</th><th>Status</th><th></th></tr></thead>
+  <tbody>
+    <tr th:each="a : ${page.content}">
+      <td th:text="${#temporals.format(a.appointmentDate,'dd MMM yyyy')}">d</td>
+      <td th:text="${#temporals.format(a.startTime,'HH:mm') + ' - ' + #temporals.format(a.endTime,'HH:mm')}">t</td>
+      <td th:text="${a.patient.fullName}">p</td>
+      <td th:text="${a.doctor.fullName}">dr</td>
+      <td class="text-truncate" style="max-width:200px" th:text="${a.reason}">r</td>
+      <td><span th:class="${'badge ' + a.status.badgeClass}" th:text="${a.status.label}">s</span></td>
+      <td class="text-end"><a class="btn btn-sm btn-outline-primary" th:href="@{/appointments/{id}(id=${a.id})}">Open</a></td>
+    </tr>
+    <tr th:if="${page.empty}"><td colspan="7"><div class="empty-state"><i class="bi bi-calendar-x"></i>No appointments found.</div></td></tr>
+  </tbody></table></div>
+<div class="card-footer bg-transparent d-flex justify-content-between align-items-center flex-wrap gap-2">
+  <span class="small text-muted" th:text="${page.totalElements} + ' appointment(s)'">0</span>
+  <nav th:replace="~{fragments/layout :: pagination(${page}, ${path}, ${qs})}"></nav></div></div>
+</main>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</div>
+</div>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

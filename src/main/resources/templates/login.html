@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Sign in')}"></head>
+<body>
+<div class="auth-wrap">
+    <div class="auth-card">
+        <div class="logo"><i class="bi bi-heart-pulse-fill"></i></div>
+        <h1 class="h4 text-center mb-1">Smart Healthcare</h1>
+        <p class="text-center text-muted mb-4">Sign in to your account</p>
+
+        <div th:if="${param.error}" class="alert alert-danger" role="alert">
+            Invalid username or password, or the account is disabled/temporarily locked.
+        </div>
+        <div th:if="${param.logout}" class="alert alert-success" role="alert">You have been logged out.</div>
+        <div th:if="${param.registered}" class="alert alert-success" role="alert">Registration successful. You can sign in now.</div>
+
+        <form th:action="@{/login}" method="post" novalidate>
+            <div class="mb-3">
+                <label for="username" class="form-label">Username</label>
+                <input type="text" class="form-control" id="username" name="username" required autofocus autocomplete="username">
+            </div>
+            <div class="mb-3">
+                <label for="password" class="form-label">Password</label>
+                <input type="password" class="form-control" id="password" name="password" required autocomplete="current-password">
+            </div>
+            <button type="submit" class="btn btn-primary w-100"><i class="bi bi-box-arrow-in-right me-1"></i> Sign in</button>
+        </form>
+
+        <p class="text-center mt-3 mb-0" th:if="${registrationEnabled}">
+            New patient? <a th:href="@{/register}">Create an account</a>
+        </p>
+        <div class="demo-banner mt-4">
+            <i class="bi bi-info-circle me-1"></i>
+            Demo system: all data is fictional. Demo logins are listed in the project README (local seeded accounts only).
+        </div>
+    </div>
+</div>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

@@ -1,0 +1,20 @@
+name: Build and test
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+      # Tests use an in-memory H2 database, so no MySQL service is needed.
+      - name: Build and run tests
+        run: mvn -B verify

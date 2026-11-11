@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head('Daily schedule')}"></head>
+<body>
+<div class="app-shell">
+<aside th:replace="~{fragments/layout :: sidebar('schedule')}"></aside>
+<div class="app-main">
+<header th:replace="~{fragments/layout :: topbar('Daily schedule')}"></header>
+<main class="content">
+<div th:replace="~{fragments/layout :: flash}"></div>
+<div class="page-title-row"><h2>Appointment schedule</h2>
+  <form class="d-flex gap-2" method="get" th:action="@{/admin/schedule}">
+    <input type="date" class="form-control" name="date" th:value="${date}">
+    <button class="btn btn-primary" type="submit">Show</button></form></div>
+<p class="text-muted" th:text="${total + ' appointment(s) on ' + #temporals.format(date,'EEEE, dd MMM yyyy')}">n</p>
+<div class="row g-3">
+  <div class="col-lg-6" th:each="entry : ${byDoctor}"><div class="card h-100">
+    <div class="card-header" th:text="${entry.key}">Doctor</div><div class="table-responsive">
+    <table class="table"><thead><tr><th>Time</th><th>Patient</th><th>Status</th><th></th></tr></thead><tbody>
+      <tr th:each="a : ${entry.value}">
+        <td th:text="${#temporals.format(a.startTime,'HH:mm') + ' - ' + #temporals.format(a.endTime,'HH:mm')}">t</td>
+        <td th:text="${a.patient.fullName}">p</td>
+        <td><span th:class="${'badge ' + a.status.badgeClass}" th:text="${a.status.label}">s</span></td>
+        <td class="text-end"><a class="btn btn-sm btn-outline-primary" th:href="@{/appointments/{id}(id=${a.id})}">Open</a></td></tr>
+    </tbody></table></div></div></div>
+  <div class="col-12" th:if="${#maps.isEmpty(byDoctor)}"><div class="card"><div class="empty-state"><i class="bi bi-calendar-x"></i>No appointments on this day.</div></div></div>
+</div>
+<div class="card mt-3"><div class="card-header">Doctor availability</div><div class="table-responsive">
+  <table class="table"><thead><tr><th>Doctor</th><th>Days</th><th>Hours</th></tr></thead><tbody>
+    <tr th:each="d : ${doctors}"><td th:text="${d.fullName}">d</td><td th:text="${d.availableDaysLabel}">days</td>
+      <td th:text="${#temporals.format(d.availableFrom,'HH:mm') + ' - ' + #temporals.format(d.availableTo,'HH:mm')}">h</td></tr>
+  </tbody></table></div></div>
+</main>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</div>
+</div>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>
