@@ -2,7 +2,10 @@
 AI-powered Smart Healthcare Management System built using Java, Spring Boot, MySQL, and REST APIs to manage patients, doctors, appointments, and hospital operations.
 
 <p align="center">
-  <img src="docs/images/banner.svg" alt="Smart Healthcare Management System" width="100%">
+  <img src="https://capsule-render.vercel.app/api?type=waving&color=0:0f2a43,50:134e4a,100:0d9488&height=220&section=header&text=Smart%20Healthcare&fontSize=54&fontColor=ffffff&animation=fadeIn&fontAlignY=36&desc=Management%20System&descSize=26&descAlignY=58" width="100%" alt="Smart Healthcare Management System">
+</p>
+<p align="center">
+  <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=600&size=20&pause=1200&color=0D9488&center=true&vCenter=true&width=700&lines=Patients+%C2%B7+Appointments+%C2%B7+Diagnostics;Admin+%C2%B7+Doctor+%C2%B7+Receptionist+%C2%B7+Patient;Java+21+%C2%B7+Spring+Boot+%C2%B7+MySQL" alt="Typing animation">
 </p>
 
 <p align="center">
@@ -46,6 +49,26 @@ AI-powered Smart Healthcare Management System built using Java, Spring Boot, MyS
 
 ---
 
+## 🧰 Tech stack
+
+<p align="center">
+  <img src="https://skillicons.dev/icons?i=java,spring,mysql,html,css,js,bootstrap,maven,git,github&perline=10" alt="Tech stack icons">
+</p>
+
+| Layer | Technology |
+|---|---|
+| Backend | Java 21 · Spring Boot 3.5 · Spring MVC · Spring Data JPA / Hibernate · Spring Security 6 |
+| Frontend | Thymeleaf · HTML5 · CSS3 · JavaScript · Bootstrap 5 + Bootstrap Icons |
+| Database | MySQL 8 (H2 in memory for tests only) |
+| Build & CI | Maven · GitHub Actions |
+
+### 📊 Project at a glance
+
+| 4 roles | 8 modules | 26 UI pages | 12+ REST endpoints | 5 test classes | 7 diagrams |
+|:-:|:-:|:-:|:-:|:-:|:-:|
+
+---
+
 ## 🎯 Why this project
 
 Hospitals juggle paper files, phone calls and spreadsheets. This system puts **four roles** on one platform:
@@ -54,6 +77,7 @@ appointments, and administrators run departments, staff and schedules — all wi
 **patient data is only visible to the people who need it**.
 
 ## ✨ Feature tour
+
 
 <table>
 <tr>
@@ -121,10 +145,9 @@ appointments, and administrators run departments, staff and schedules — all wi
 
 ## 🖼️ UI preview
 
-<p align="center">
-  <img src="docs/images/ui-layout.svg" alt="Illustrative layout of the admin dashboard" width="92%">
-</p>
-<p align="center"><sub>Illustrative layout (sample values). Add your own real screenshots in <code>docs/screenshots/</code> — see the gallery below.</sub></p>
+Add real screenshots of your running app in `docs/screenshots/` and show them here, for example:
+`![Dashboard](docs/screenshots/admin-dashboard.png)`
+
 
 <!--
 GALLERY — after you run the app, take screenshots, save them in docs/screenshots/ and uncomment this block:
@@ -137,6 +160,7 @@ GALLERY — after you run the app, take screenshots, save them in docs/screensho
 -->
 
 ### 👥 Who can do what
+
 
 | Feature | 👑 Admin | 🧾 Receptionist | 🩺 Doctor | 🙋 Patient |
 |---|:-:|:-:|:-:|:-:|
@@ -182,6 +206,7 @@ flowchart LR
 ```
 
 ### 2) Appointment booking flow
+
 
 ```mermaid
 flowchart TD
@@ -439,7 +464,6 @@ A GitHub Actions workflow (`.github/workflows/build.yml`) runs the same command 
 Smart-Healthcare-Management-system/
 ├── pom.xml
 ├── database/                  01_create_database.sql · 02_schema.sql
-├── docs/images/               banner + layout preview
 ├── .github/workflows/         CI: mvn verify on every push
 └── src/
     ├── main/java/com/smarthealth/hms/
